@@ -2,16 +2,18 @@ package pack;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
 
-public class ConnectMariaDB {
+public class ConInsertStudent {
 	
 	//url Data
 	//"jdbc:mariadb://192.168.153.1:3306/database Name";
 	private static final String DB_DRIVER_CLASS = "org.mariadb.jdbc.Driver";
+	private static final String DATABASE_NAME = "student";
 	private static final String DB_URL = "jdbc:mariadb://192.168.153.1:3306/study";
 
 	//User Data
@@ -26,10 +28,10 @@ public class ConnectMariaDB {
 	/*private static Connection conn;*/
 
 	Statement stmt = null;
+	PreparedStatement istmt = null;
 
 
-
-	private void connectDB() {
+	private void connectDB(String name, int number) {
 
 		ResultSet rs = null;
 		
@@ -40,31 +42,57 @@ public class ConnectMariaDB {
 
 			Class.forName(DB_DRIVER_CLASS);
 			
+			
+			
 			// 위에서 선언한 url,id,pw로 로그인
 			Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
-			System.out.println("연결성공");
-			System.out.println(connection);
+			System.out.println("연결성공!!!!");
+	
+			
+			// db에 써줄 쿼리문 mariadb 에서 이렇게 작성해도 결과가 조회된다
+			String selectQuery = "select * from student";
 			
 			
 			stmt = connection.createStatement();
-			// db에 써줄 쿼리문 mariadb 에서 이렇게 작성해도 결과가 조회된다
-			String query = "select * from student";
 			
 			
-			rs = stmt.executeQuery(query);
+			System.out.println(name);
+			System.out.println(number);
+			rs = stmt.executeQuery(selectQuery);
 			
+			if(name != null && number != 0 ) {
+				System.out.println(selectQuery);
+				String insertQuery = "insert into "+ DATABASE_NAME +" values (?,?)";
+				istmt = connection.prepareStatement(insertQuery);
+				
+				int index = 1;
+				
+				istmt.setInt(index++, number);
+				istmt.setString(index++, name);
+				
+				int cUpdate = istmt.executeUpdate();
+				if (cUpdate == 0) {
+					System.out.println("데이터값에 이상이 있습니다.");
+				} else {
+					System.out.println("데이터 Insert 성공!");
+				}
+								
+				System.out.println(insertQuery);
+			}
+
+			System.out.println("%%%%");
 			// table 이 끝날떄까지 출력
 			while (rs.next()) {
-				String number = rs.getString(1);
-				String name = rs.getString(2);
+				String pNumber = rs.getString(1);
+				String pName = rs.getString(2);
 
-				System.out.println("번호 : " + number);
-				System.out.println("이름 : " + name);
+				System.out.println("번호 : " + pNumber);
+				System.out.println("이름 : " + pName);
 
 			}
 			
-
+			System.out.println("===============================================");
 
 			//catch = 에러 잡아주는칸
 		} catch (ClassNotFoundException e) {
@@ -84,16 +112,17 @@ public class ConnectMariaDB {
 	}
 
 
-	public void connect() {
+	public void conStudy(String name, int number) {
 
-		ConnectMariaDB con = new ConnectMariaDB();
+		ConInsertStudent con = new ConInsertStudent();
 
-		con.connectDB();
+		con.connectDB(name, number);
 
 	}
 
 
 
-	
-	
+		
+		
+		
 }
