@@ -20,9 +20,6 @@ public class ConnectMariaDB {
 	private static final String DB_PASSWORD = "Roqkf159";
 	
 	
-
-
-
 	/*private static Connection conn;*/
 
 	Statement stmt = null;
@@ -43,7 +40,7 @@ public class ConnectMariaDB {
 			// 위에서 선언한 url,id,pw로 로그인
 			Connection connection = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
 
-			System.out.println("연결성공");
+			System.out.println("연결성공@!@!@!@!");
 			System.out.println(connection);
 			
 			
